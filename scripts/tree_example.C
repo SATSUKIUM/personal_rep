@@ -33,8 +33,9 @@
 #include <TRandom.h> // 乱数
 
 Double_t tree_example(){
+    Double_t nentries=0;
     // 保存ファイルと、その中に記録するツリー
-    TFile *file = new TFile("tree.root", "RECREATE");
+    TFile *file = new TFile("data/tree.root", "RECREATE");
     TTree *tree = new TTree("tree", "example discription");
 
     // 各イベントごとの値を入れる変数
@@ -43,19 +44,21 @@ Double_t tree_example(){
 
     // ツリーにブランチを作る
     tree->Branch("time", &time, "time/I");
-    tree->Branch("energy_deposit", energy_deposit, "energy_deposit/D");
+    tree->Branch("energy_deposit", energy_deposit, "energy_deposit[2]/D");
 
     // イベントごとに値を記録
-    for(Int_t eventID=0; eventID<1000; eventID++){
+    for(Int_t eventID=0; eventID<10000; eventID++){
         time = 2*eventID; // 例
-        energy_deposit[0] = gRandom->Poisson(3);
-        energy_deposit[1] = gRandom->Poisson(5);
+        energy_deposit[0] = gRandom->Gaus(3,1);
+        energy_deposit[1] = gRandom->Gaus(6,2);
 
         tree->Fill();
+        nentries++;
     }
 
     // ツリーを書き出し
     tree->Write();
     file->Close();
     
+    return nentries;
 }
