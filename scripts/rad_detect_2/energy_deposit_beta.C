@@ -32,7 +32,7 @@
 #include <TFile.h>
 #include <TRandom.h> // 乱数
 
-Double_t energy_deposit(){
+Double_t energy_deposit_beta(){
     Double_t beta_gamma = 0.0;
     Double_t step_beta_gamma = 0.01;
     Double_t beta_gamma_min = 1.0/sqrt(2.0);
@@ -77,7 +77,9 @@ Double_t energy_deposit(){
                 energy_deposit_buf = 0.18*pow(beta, -1.7); //in MeV
                 if(n_detector == 0){
                     E_thin_detector[particle_id][step] = energy_deposit_buf;
-                    printf("thin detector: %d, %d, %f\n", particle_id, step, energy_deposit_buf);
+                    if(step % 50 == 0){
+                        printf("thin detector: %d, %d, %f\n", particle_id, step, energy_deposit_buf);
+                    }
                 }
                 energy_deposit_thick_buf += energy_deposit_buf;
                 particle_energy_buf += - energy_deposit_buf;
@@ -90,7 +92,10 @@ Double_t energy_deposit(){
                 }
             }
             E_thick_detector[particle_id][step] = energy_deposit_thick_buf;
-            printf("thick detector: %d, %d, %f\n", particle_id, step, energy_deposit_thick_buf);
+            if(step % 50 == 0){
+                printf("thick detector: %d, %d, %f\n", particle_id, step, energy_deposit_thick_buf);
+            }
+            // printf("thick detector: %d, %d, %f\n", particle_id, step, energy_deposit_thick_buf);
         }
     }
 
