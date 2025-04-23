@@ -35,7 +35,7 @@
 Double_t energy_deposit_beta(){
     Double_t beta_gamma = 0.0;
     Double_t step_beta_gamma = 0.01;
-    Double_t beta_gamma_min = 1.0/sqrt(2.0);
+    Double_t beta_gamma_min = 0.3;
     Double_t beta_gamma_max = 10.0;
 
     Double_t m_proton = 0.938272*1000.0;
@@ -63,8 +63,11 @@ Double_t energy_deposit_beta(){
     Double_t energy_deposit_thin_buf = 0.0, energy_deposit_thick_buf = 0.0;
     Double_t particle_energy_buf = 0.0;
     Double_t mass_buf = 0.0;
+    Double_t charge_buf = 0.0;
+    Double_t energy_deposit_thin_max = 0.0, energy_deposit_thick_max = 0.0, energy_deposit_thin_min = 1e5, energy_deposit_thick_min = 1e5;
     for(Int_t particle_id=0; particle_id<3; particle_id++){
         mass_buf = mass_list[particle_id];
+        charge_buf = pow(2.0, particle_id); // 1 for proton, 2 for deuteron, 4 for alpha
         beta_gamma = beta_gamma_min;
         // beta_gamma = 0.1;
 
@@ -80,11 +83,17 @@ Double_t energy_deposit_beta(){
             particle_energy_buf = mass_buf*(beta_gamma/beta_buf); // in MeV
 
             for(Int_t n_detector=0; n_detector<10; n_detector++){
-                energy_deposit_buf = 0.18*pow(beta_buf, -1.7); //in MeV
+                energy_deposit_buf = charge_buf*0.18*pow(beta_buf, -1.7); //in MeV
                 if(n_detector == 0){
                     E_thin_detector[particle_id][step] = energy_deposit_buf;
                     if(step % 50 == 0){
                         printf("thin detector: %d, %d, %f\n", particle_id, step, energy_deposit_buf);
+                    }
+                    if(energy_deposit_buf > energy_deposit_thin_max){
+                        energy_deposit_thin_max = energy_deposit_buf;
+                    }
+                    if(energy_deposit_buf < energy_deposit_thin_min){
+                        energy_deposit_thin_min = energy_deposit_buf;
                     }
                 }
                 energy_deposit_thick_buf += energy_deposit_buf;
@@ -98,6 +107,12 @@ Double_t energy_deposit_beta(){
                 }
             }
             E_thick_detector[particle_id][step] = energy_deposit_thick_buf;
+            if(energy_deposit_thick_buf > energy_deposit_thick_max){
+                energy_deposit_thick_max = energy_deposit_thick_buf;
+            }
+            if(energy_deposit_thick_buf < energy_deposit_thick_min){
+                energy_deposit_thick_min = energy_deposit_thick_buf;
+            }
             if(step % 50 == 0){
                 printf("thick detector: %d, %d, %f\n", particle_id, step, energy_deposit_thick_buf);
             }
@@ -105,26 +120,54 @@ Double_t energy_deposit_beta(){
         }
     }
 
-    TGraph *graph1 = new TGraph(E_thin_detector[0].size(), &beta_list[0], &E_thin_detector[0][0]);
+    // TGraph *graph1 = new TGraph(E_thin_detector[0].size(), &beta_list[0], &E_thin_detector[0][0]);
+    // TGraph *graph2 = new TGraph(E_thin_detector[1].size(), &beta_list[0], &E_thin_detector[1][0]);
+    // TGraph *graph3 = new TGraph(E_thin_detector[2].size(), &beta_list[0], &E_thin_detector[2][0]);
+
+    // graph1->SetTitle("Energy deposit of proton");
+    // graph1->GetXaxis()->SetTitle("beta");
+    // graph1->GetYaxis()->SetTitle("Energy deposit in thin detector [MeV]");
+    // graph1->SetMarkerStyle(20);
+    // graph1->SetMarkerSize(0.5);
+    // graph1->SetLineColor(kRed);
+
+    // graph2->SetTitle("Energy deposit of deuteron");
+    // graph2->GetXaxis()->SetTitle("beta");
+    // graph2->GetYaxis()->SetTitle("Energy deposit in thin detector [MeV]");
+    // graph2->SetMarkerStyle(20);
+    // graph2->SetMarkerSize(0.5);
+    // graph2->SetLineColor(kBlue);
+
+    // graph3->SetTitle("Energy deposit of alpha");
+    // graph3->GetXaxis()->SetTitle("beta");
+    // graph3->GetYaxis()->SetTitle("Energy deposit in thin detector [MeV]");
+    // graph3->SetMarkerStyle(20);
+    // graph3->SetMarkerSize(0.5);
+    // graph3->SetLineColor(kGreen);
+
+    
+    
+    TGraph *graph1 = new TGraph(E_thin_detector[0].size(), &beta_list[0], &E_thick_detector[0][0]);
+    TGraph *graph2 = new TGraph(E_thin_detector[1].size(), &beta_list[0], &E_thick_detector[1][0]);
+    TGraph *graph3 = new TGraph(E_thin_detector[2].size(), &beta_list[0], &E_thick_detector[2][0]);
+    
     graph1->SetTitle("Energy deposit of proton");
     graph1->GetXaxis()->SetTitle("beta");
-    graph1->GetYaxis()->SetTitle("Energy deposit in thin detector [MeV]");
+    graph1->GetYaxis()->SetTitle("Energy deposit in thick detector [MeV]");
     graph1->SetMarkerStyle(20);
     graph1->SetMarkerSize(0.5);
     graph1->SetLineColor(kRed);
 
-    TGraph *graph2 = new TGraph(E_thin_detector[1].size(), &beta_list[0], &E_thin_detector[1][0]);
     graph2->SetTitle("Energy deposit of deuteron");
     graph2->GetXaxis()->SetTitle("beta");
-    graph2->GetYaxis()->SetTitle("Energy deposit in thin detector [MeV]");
+    graph2->GetYaxis()->SetTitle("Energy deposit in thick detector [MeV]");
     graph2->SetMarkerStyle(20);
     graph2->SetMarkerSize(0.5);
     graph2->SetLineColor(kBlue);
 
-    TGraph *graph3 = new TGraph(E_thin_detector[2].size(), &beta_list[0], &E_thin_detector[2][0]);
     graph3->SetTitle("Energy deposit of alpha");
     graph3->GetXaxis()->SetTitle("beta");
-    graph3->GetYaxis()->SetTitle("Energy deposit in thin detector [MeV]");
+    graph3->GetYaxis()->SetTitle("Energy deposit in thick detector [MeV]");
     graph3->SetMarkerStyle(20);
     graph3->SetMarkerSize(0.5);
     graph3->SetLineColor(kGreen);

@@ -63,8 +63,11 @@ Double_t energy_deposit(){
     Double_t energy_deposit_thin_buf = 0.0, energy_deposit_thick_buf = 0.0;
     Double_t particle_energy_buf = 0.0;
     Double_t mass_buf = 0.0;
+    Double_t charge_buf = 0.0;
+    Double_t energy_deposit_thin_max = 0.0, energy_deposit_thick_max = 0.0, energy_deposit_thin_min = 1e5, energy_deposit_thick_min = 1e5;
     for(Int_t particle_id=0; particle_id<3; particle_id++){
         mass_buf = mass_list[particle_id];
+        charge_buf = pow(2.0, particle_id); // 1 for proton, 2 for deuteron, 4 for alpha
         beta_gamma = beta_gamma_min;
         // beta_gamma = 0.1;
 
@@ -78,11 +81,17 @@ Double_t energy_deposit(){
             particle_energy_buf = mass_buf*(beta_gamma/beta_buf); // in GeV
 
             for(Int_t n_detector=0; n_detector<10; n_detector++){
-                energy_deposit_buf = 0.18*pow(beta_buf, -1.7); //in MeV
+                energy_deposit_buf = charge_buf*0.18*pow(beta_buf, -1.7); //in MeV
                 if(n_detector == 0){
                     E_thin_detector[particle_id][step] = energy_deposit_buf;
                     if(step % 50 == 0){
                         printf("thin detector: %d, %d, %f\n", particle_id, step, energy_deposit_buf);
+                    }
+                    if(energy_deposit_buf > energy_deposit_thin_max){
+                        energy_deposit_thin_max = energy_deposit_buf;
+                    }
+                    if(energy_deposit_buf < energy_deposit_thin_min){
+                        energy_deposit_thin_min = energy_deposit_buf;
                     }
                 }
                 energy_deposit_thick_buf += energy_deposit_buf;
@@ -96,6 +105,12 @@ Double_t energy_deposit(){
                 }
             }
             E_thick_detector[particle_id][step] = energy_deposit_thick_buf;
+            if(energy_deposit_thick_buf > energy_deposit_thick_max){
+                energy_deposit_thick_max = energy_deposit_thick_buf;
+            }
+            if(energy_deposit_thick_buf < energy_deposit_thick_min){
+                energy_deposit_thick_min = energy_deposit_thick_buf;
+            }
             if(step % 50 == 0){
                 printf("thick detector: %d, %d, %f\n", particle_id, step, energy_deposit_thick_buf);
             }
