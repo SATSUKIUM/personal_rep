@@ -32,7 +32,7 @@
 #include <TFile.h>
 #include <TRandom.h> // 乱数
 
-Double_t energy_deposit_beta(){
+Double_t energy_deposit_beta_gamma(){
     Double_t beta_gamma = 0.0;
     Double_t step_beta_gamma = 0.01;
     Double_t beta_gamma_min = 1.0/sqrt(2.0);
@@ -105,25 +105,25 @@ Double_t energy_deposit_beta(){
         }
     }
 
-    TGraph *graph1 = new TGraph(E_thin_detector[0].size(), &beta_list[0], &E_thin_detector[0][0]);
+    TGraph *graph1 = new TGraph(E_thin_detector[0].size(), &beta_gamma_list[0], &E_thin_detector[0][0]);
     graph1->SetTitle("Energy deposit of proton");
-    graph1->GetXaxis()->SetTitle("beta");
+    graph1->GetXaxis()->SetTitle("beta gamma");
     graph1->GetYaxis()->SetTitle("Energy deposit in thin detector [MeV]");
     graph1->SetMarkerStyle(20);
     graph1->SetMarkerSize(0.5);
     graph1->SetLineColor(kRed);
 
-    TGraph *graph2 = new TGraph(E_thin_detector[1].size(), &beta_list[0], &E_thin_detector[1][0]);
+    TGraph *graph2 = new TGraph(E_thin_detector[1].size(), &beta_gamma_list[0], &E_thin_detector[1][0]);
     graph2->SetTitle("Energy deposit of deuteron");
-    graph2->GetXaxis()->SetTitle("beta");
+    graph2->GetXaxis()->SetTitle("beta gamma");
     graph2->GetYaxis()->SetTitle("Energy deposit in thin detector [MeV]");
     graph2->SetMarkerStyle(20);
     graph2->SetMarkerSize(0.5);
     graph2->SetLineColor(kBlue);
 
-    TGraph *graph3 = new TGraph(E_thin_detector[2].size(), &beta_list[0], &E_thin_detector[2][0]);
+    TGraph *graph3 = new TGraph(E_thin_detector[2].size(), &beta_gamma_list[0], &E_thin_detector[2][0]);
     graph3->SetTitle("Energy deposit of alpha");
-    graph3->GetXaxis()->SetTitle("beta");
+    graph3->GetXaxis()->SetTitle("beta gamma");
     graph3->GetYaxis()->SetTitle("Energy deposit in thin detector [MeV]");
     graph3->SetMarkerStyle(20);
     graph3->SetMarkerSize(0.5);
