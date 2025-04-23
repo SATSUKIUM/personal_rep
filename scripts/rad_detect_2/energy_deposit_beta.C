@@ -69,12 +69,16 @@ Double_t energy_deposit_beta(){
         // beta_gamma = 0.1;
 
         for(Int_t step=0; beta_gamma<beta_gamma_max; step++){
+            energy_deposit_thick_buf = 0.0;
+
             beta_gamma += step_beta_gamma;
-            beta_buf = sqrt(1 - beta_gamma*beta_gamma/(1+beta_gamma*beta_gamma)); // various beta
+            beta_buf = sqrt(beta_gamma*beta_gamma/(1+beta_gamma*beta_gamma)); // various beta
             beta = beta_buf; // incident particle beta
 
+            particle_energy_buf = mass_buf*(beta_gamma/beta_buf); // in GeV
+
             for(Int_t n_detector=0; n_detector<10; n_detector++){
-                energy_deposit_buf = 0.18*pow(beta, -1.7); //in MeV
+                energy_deposit_buf = 0.18*pow(beta_buf, -1.7); //in MeV
                 if(n_detector == 0){
                     E_thin_detector[particle_id][step] = energy_deposit_buf;
                     if(step % 50 == 0){
@@ -125,8 +129,8 @@ Double_t energy_deposit_beta(){
 
     TCanvas *c1 = new TCanvas("c1", "Energy deposit", 800, 600);
     c1->SetGrid();
-    c1->SetLogx();
-    c1->SetLogy();
+    // c1->SetLogx();
+    // c1->SetLogy();
 
     graph1->Draw("AL");
     graph2->Draw("L SAME");
