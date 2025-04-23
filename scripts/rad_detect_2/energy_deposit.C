@@ -34,8 +34,8 @@
 
 Double_t energy_deposit(){
     Double_t beta_gamma = 0.0;
-    Double_t step_beta_gamma = 0.01;
-    Double_t beta_gamma_min = 1.0/sqrt(2.0);
+    Double_t step_beta_gamma = 0.001;
+    Double_t beta_gamma_min = 0.26;
     Double_t beta_gamma_max = 10.0;
 
     Double_t m_proton = 0.938272*1000.0;
@@ -82,6 +82,7 @@ Double_t energy_deposit(){
 
             for(Int_t n_detector=0; n_detector<10; n_detector++){
                 energy_deposit_buf = charge_buf*0.18*pow(beta_buf, -1.7); //in MeV
+                // energy_deposit_buf = 0.18*pow(beta_buf, -1.7); //in MeV
                 if(n_detector == 0){
                     E_thin_detector[particle_id][step] = energy_deposit_buf;
                     if(step % 50 == 0){
@@ -125,6 +126,11 @@ Double_t energy_deposit(){
     graph1->SetMarkerStyle(20);
     graph1->SetMarkerSize(0.5);
     graph1->SetLineColor(kRed);
+    graph1->GetXaxis()->SetRangeUser(0, energy_deposit_thick_max*1.1);
+    graph1->GetYaxis()->SetRangeUser(0, energy_deposit_thin_max*1.1);
+    graph1->GetXaxis()->SetLimits(0, energy_deposit_thick_max*1.1);
+    graph1->GetYaxis()->SetLimits(0, energy_deposit_thin_max*1.1);
+    graph1->SetLineWidth(2);
 
     TGraph *graph2 = new TGraph(E_thin_detector[1].size(), &E_thick_detector[1][0], &E_thin_detector[1][0]);
     graph2->SetTitle("Energy deposit of deuteron");
@@ -133,6 +139,11 @@ Double_t energy_deposit(){
     graph2->SetMarkerStyle(20);
     graph2->SetMarkerSize(0.5);
     graph2->SetLineColor(kBlue);
+    graph2->GetXaxis()->SetRangeUser(0, energy_deposit_thick_max*1.1);
+    graph2->GetYaxis()->SetRangeUser(0, energy_deposit_thin_max*1.1);
+    graph2->GetXaxis()->SetLimits(0, energy_deposit_thick_max*1.1);
+    graph2->GetYaxis()->SetLimits(0, energy_deposit_thin_max*1.1);
+    graph2->SetLineWidth(2);
 
     TGraph *graph3 = new TGraph(E_thin_detector[2].size(), &E_thick_detector[2][0], &E_thin_detector[2][0]);
     graph3->SetTitle("Energy deposit of alpha");
@@ -141,6 +152,11 @@ Double_t energy_deposit(){
     graph3->SetMarkerStyle(20);
     graph3->SetMarkerSize(0.5);
     graph3->SetLineColor(kGreen);
+    graph3->GetXaxis()->SetRangeUser(0, energy_deposit_thick_max*1.1);
+    graph3->GetYaxis()->SetRangeUser(0, energy_deposit_thin_max*1.1);
+    graph3->GetXaxis()->SetLimits(0, energy_deposit_thick_max*1.1);
+    graph3->GetYaxis()->SetLimits(0, energy_deposit_thin_max*1.1);
+    graph3->SetLineWidth(2);
 
     TCanvas *c1 = new TCanvas("c1", "Energy deposit", 800, 600);
     c1->SetGrid();

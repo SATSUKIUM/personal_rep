@@ -34,8 +34,8 @@
 
 Double_t energy_deposit_beta_gamma(){
     Double_t beta_gamma = 0.0;
-    Double_t step_beta_gamma = 0.01;
-    Double_t beta_gamma_min = 0.3;
+    Double_t step_beta_gamma = 0.001;
+    Double_t beta_gamma_min = 0.26;
     Double_t beta_gamma_max = 10.0;
 
     Double_t m_proton = 0.938272*1000.0;
@@ -84,10 +84,11 @@ Double_t energy_deposit_beta_gamma(){
 
             for(Int_t n_detector=0; n_detector<10; n_detector++){
                 energy_deposit_buf = charge_buf*0.18*pow(beta_buf, -1.7); //in MeV
+                // energy_deposit_buf = 0.18*pow(beta_buf, -1.7); //in MeV
                 if(n_detector == 0){
                     E_thin_detector[particle_id][step] = energy_deposit_buf;
                     if(step % 50 == 0){
-                        printf("thin detector: %d, %d, %f\n", particle_id, step, energy_deposit_buf);
+                        // printf("thin detector: %d, %d, %f\n", particle_id, step, energy_deposit_buf);
                     }
                     if(energy_deposit_buf > energy_deposit_thin_max){
                         energy_deposit_thin_max = energy_deposit_buf;
@@ -105,6 +106,10 @@ Double_t energy_deposit_beta_gamma(){
                 else{
                     beta_buf = sqrt(1-pow(mass_buf/particle_energy_buf, 2));
                 }
+                if(step % 50 == 0){
+                    printf("\tparticle: %f MeV/c2, incident beta gamma: %f, num of detector passed: %d, total energy: %f = %f * %f\n", mass_list[particle_id], beta_gamma, n_detector+1, particle_energy_buf, mass_buf, 1.0/sqrt(1-beta_buf*beta_buf));
+                }
+                
             }
             E_thick_detector[particle_id][step] = energy_deposit_thick_buf;
             if(energy_deposit_thick_buf > energy_deposit_thick_max){
@@ -114,7 +119,7 @@ Double_t energy_deposit_beta_gamma(){
                 energy_deposit_thick_min = energy_deposit_thick_buf;
             }
             if(step % 50 == 0){
-                printf("thick detector: %d, %d, %f\n", particle_id, step, energy_deposit_thick_buf);
+                // printf("thick detector: %d, %d, %f\n", particle_id, step, energy_deposit_thick_buf);
             }
             // printf("thick detector: %d, %d, %f\n", particle_id, step, energy_deposit_thick_buf);
         }
@@ -174,7 +179,7 @@ Double_t energy_deposit_beta_gamma(){
 
     TCanvas *c1 = new TCanvas("c1", "Energy deposit", 800, 600);
     c1->SetGrid();
-    // c1->SetLogx();
+    c1->SetLogx();
     // c1->SetLogy();
 
     graph1->Draw("AL");

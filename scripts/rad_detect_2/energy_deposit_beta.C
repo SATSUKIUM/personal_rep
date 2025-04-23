@@ -34,8 +34,8 @@
 
 Double_t energy_deposit_beta(){
     Double_t beta_gamma = 0.0;
-    Double_t step_beta_gamma = 0.01;
-    Double_t beta_gamma_min = 0.3;
+    Double_t step_beta_gamma = 0.001;
+    Double_t beta_gamma_min = 0.26;
     Double_t beta_gamma_max = 10.0;
 
     Double_t m_proton = 0.938272*1000.0;
@@ -84,6 +84,7 @@ Double_t energy_deposit_beta(){
 
             for(Int_t n_detector=0; n_detector<10; n_detector++){
                 energy_deposit_buf = charge_buf*0.18*pow(beta_buf, -1.7); //in MeV
+                // energy_deposit_buf = 0.18*pow(beta_buf, -1.7); //in MeV
                 if(n_detector == 0){
                     E_thin_detector[particle_id][step] = energy_deposit_buf;
                     if(step % 50 == 0){
