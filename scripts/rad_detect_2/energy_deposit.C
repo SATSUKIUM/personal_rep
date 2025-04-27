@@ -35,8 +35,8 @@
 Double_t energy_deposit(){
     Double_t beta_gamma = 0.0;
     Double_t step_beta_gamma = 0.001;
-    Double_t beta_gamma_min = 0.252;
-    Double_t beta_gamma_max = 10.0;
+    Double_t beta_gamma_min = 0.255;
+    Double_t beta_gamma_max = sqrt(2.0);
 
     Double_t m_proton = 0.938272*1000.0;
     Double_t m_deuteron = 1.875612*1000.0;

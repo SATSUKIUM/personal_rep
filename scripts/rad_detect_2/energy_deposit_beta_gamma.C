@@ -35,8 +35,8 @@
 Double_t energy_deposit_beta_gamma(){
     Double_t beta_gamma = 0.0;
     Double_t step_beta_gamma = 0.001;
-    Double_t beta_gamma_min = 0.26;
-    Double_t beta_gamma_max = 10.0;
+    Double_t beta_gamma_min = 0.255;
+    Double_t beta_gamma_max = sqrt(2.0);
 
     Double_t m_proton = 0.938272*1000.0;
     Double_t m_deuteron = 1.875612*1000.0;
@@ -67,7 +67,20 @@ Double_t energy_deposit_beta_gamma(){
     Double_t energy_deposit_thin_max = 0.0, energy_deposit_thick_max = 0.0, energy_deposit_thin_min = 1e5, energy_deposit_thick_min = 1e5;
     for(Int_t particle_id=0; particle_id<3; particle_id++){
         mass_buf = mass_list[particle_id];
-        charge_buf = pow(2.0, particle_id); // 1 for proton, 2 for deuteron, 4 for alpha
+
+        if(particle_id == 0){
+            charge_buf = 1.0; // 1 for proton
+        }
+        else if(particle_id == 1){
+            charge_buf = 1.0; // 1 for deuteron
+        }
+        else if(particle_id == 2){
+            charge_buf = 2.0; // 2 for alpha
+        }
+        else{
+            charge_buf = 0.0;
+        }
+
         beta_gamma = beta_gamma_min;
         // beta_gamma = 0.1;
 
@@ -105,6 +118,12 @@ Double_t energy_deposit_beta_gamma(){
                 }
                 else{
                     beta_buf = sqrt(1-pow(mass_buf/particle_energy_buf, 2));
+                }
+                if(energy_deposit_thick_buf > energy_deposit_thick_max){
+                    energy_deposit_thick_max = energy_deposit_thick_buf;
+                }
+                if(energy_deposit_thick_buf < energy_deposit_thick_min){
+                    energy_deposit_thick_min = energy_deposit_thick_buf;
                 }
                 if(step % 50 == 0){
                     printf("\tparticle: %f MeV/c2, incident beta gamma: %f, num of detector passed: %d, total energy: %f = %f * %f\n", mass_list[particle_id], beta_gamma, n_detector+1, particle_energy_buf, mass_buf, 1.0/sqrt(1-beta_buf*beta_buf));
@@ -156,35 +175,45 @@ Double_t energy_deposit_beta_gamma(){
     TGraph *graph2 = new TGraph(E_thin_detector[1].size(), &beta_gamma_list[0], &E_thick_detector[1][0]);
     TGraph *graph3 = new TGraph(E_thin_detector[2].size(), &beta_gamma_list[0], &E_thick_detector[2][0]);
     
-    graph1->SetTitle("Energy deposit of proton");
+    graph1->SetTitle("Energy deposit comparison");
     graph1->GetXaxis()->SetTitle("beta gamma");
     graph1->GetYaxis()->SetTitle("Energy deposit in thick detector [MeV]");
     graph1->SetMarkerStyle(20);
     graph1->SetMarkerSize(0.5);
     graph1->SetLineColor(kRed);
+    graph1->GetYaxis()->SetRangeUser(0, energy_deposit_thick_max*1.1);
+    graph1->GetYaxis()->SetLimits(0, energy_deposit_thick_max*1.1);
+    graph1->SetLineWidth(3);
 
-    graph2->SetTitle("Energy deposit of deuteron");
+    graph2->SetTitle("Energy deposit comparison");
     graph2->GetXaxis()->SetTitle("beta gamma");
     graph2->GetYaxis()->SetTitle("Energy deposit in thick detector [MeV]");
     graph2->SetMarkerStyle(20);
     graph2->SetMarkerSize(0.5);
     graph2->SetLineColor(kBlue);
+    graph2->GetYaxis()->SetRangeUser(0, energy_deposit_thick_max*1.1);
+    graph2->GetYaxis()->SetLimits(0, energy_deposit_thick_max*1.1);
+    graph2->SetLineWidth(3);
 
-    graph3->SetTitle("Energy deposit of alpha");
+    graph3->SetTitle("Energy deposit comparison");
     graph3->GetXaxis()->SetTitle("beta gamma");
     graph3->GetYaxis()->SetTitle("Energy deposit in thick detector [MeV]");
     graph3->SetMarkerStyle(20);
     graph3->SetMarkerSize(0.5);
     graph3->SetLineColor(kGreen);
+    graph3->GetYaxis()->SetRangeUser(0, energy_deposit_thick_max*1.1);
+    graph3->GetYaxis()->SetLimits(0, energy_deposit_thick_max*1.1);
+    graph3->SetLineWidth(3);
 
     TCanvas *c1 = new TCanvas("c1", "Energy deposit", 800, 600);
     c1->SetGrid();
     c1->SetLogx();
     // c1->SetLogy();
 
-    graph1->Draw("AL");
+    graph3->Draw("AL");
+    graph1->Draw("L SAME");
     graph2->Draw("L SAME");
-    graph3->Draw("L SAME");
+    // graph3->Draw("L SAME");
     c1->Update();
 
     TLegend *legend = new TLegend(0.1, 0.7, 0.3, 0.9);
