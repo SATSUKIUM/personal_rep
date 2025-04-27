@@ -35,7 +35,7 @@
 Double_t energy_deposit_beta(){
     Double_t beta_gamma = 0.0;
     Double_t step_beta_gamma = 0.001;
-    Double_t beta_gamma_min = 0.26;
+    Double_t beta_gamma_min = 0.252;
     Double_t beta_gamma_max = 10.0;
 
     Double_t m_proton = 0.938272*1000.0;
@@ -67,7 +67,20 @@ Double_t energy_deposit_beta(){
     Double_t energy_deposit_thin_max = 0.0, energy_deposit_thick_max = 0.0, energy_deposit_thin_min = 1e5, energy_deposit_thick_min = 1e5;
     for(Int_t particle_id=0; particle_id<3; particle_id++){
         mass_buf = mass_list[particle_id];
-        charge_buf = pow(2.0, particle_id); // 1 for proton, 2 for deuteron, 4 for alpha
+        
+        if(particle_id == 0){
+            charge_buf = 1.0; // 1 for proton
+        }
+        else if(particle_id == 1){
+            charge_buf = 1.0; // 1 for deuteron
+        }
+        else if(particle_id == 2){
+            charge_buf = 2.0; // 2 for alpha
+        }
+        else{
+            charge_buf = 0.0;
+        }
+
         beta_gamma = beta_gamma_min;
         // beta_gamma = 0.1;
 
@@ -158,6 +171,7 @@ Double_t energy_deposit_beta(){
     graph1->SetMarkerStyle(20);
     graph1->SetMarkerSize(0.5);
     graph1->SetLineColor(kRed);
+    graph1->SetLineWidth(3);
 
     graph2->SetTitle("Energy deposit of deuteron");
     graph2->GetXaxis()->SetTitle("beta");
@@ -165,6 +179,7 @@ Double_t energy_deposit_beta(){
     graph2->SetMarkerStyle(20);
     graph2->SetMarkerSize(0.5);
     graph2->SetLineColor(kBlue);
+    graph2->SetLineWidth(3);
 
     graph3->SetTitle("Energy deposit of alpha");
     graph3->GetXaxis()->SetTitle("beta");
@@ -172,6 +187,7 @@ Double_t energy_deposit_beta(){
     graph3->SetMarkerStyle(20);
     graph3->SetMarkerSize(0.5);
     graph3->SetLineColor(kGreen);
+    graph3->SetLineWidth(3);
 
     TCanvas *c1 = new TCanvas("c1", "Energy deposit", 800, 600);
     c1->SetGrid();
